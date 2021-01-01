@@ -1,6 +1,9 @@
 <template>
   <div>
     <div style="overflow: hidden">
+      <div style="float: left; padding-left: 10px">
+        <el-button type="primary">发起众筹</el-button>
+      </div>
       <el-pagination
           background small style="float: right;"
           layout="prev, slot, next, jumper" :page-count="totalPage"
@@ -14,7 +17,9 @@
         <FundingCard :funding="funding"></FundingCard>
       </el-col>
     </el-row>
+    <el-dialog>
 
+    </el-dialog>
   </div>
 </template>
 

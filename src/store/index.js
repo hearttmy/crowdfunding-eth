@@ -6,20 +6,13 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     funding: {},
+    isEmpty: true,
   },
   mutations: {
     updateFunding(state, res) {
-
+      state.funding = res
+      state.isEmpty = false
     },
-    setSessionStorage(state) {
-      sessionStorage.setItem('state', JSON.stringify(state))
-    },
-    getSessionStorage(state) {
-      if (sessionStorage.getItem('state') != null) {
-        const tmp = JSON.parse(sessionStorage.getItem('state'))
-        state.funding = tmp.funding
-      }
-    }
   },
 })
 
