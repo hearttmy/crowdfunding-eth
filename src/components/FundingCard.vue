@@ -3,18 +3,18 @@
     <img class="funding-cover" src="~@/assets/img/elliot.jpg">
     <div style="padding: 10px">
       <div style="font-size: 20px; font-weight: bold;">{{funding.projectName}}</div>
-      <div style="font-size: 15px; color: #999;">{{funding.endTime}}</div>
-      <div><el-progress :percentage="50"></el-progress></div>
+      <div style="font-size: 15px; color: #999;">{{remainTime}} 天</div>
+      <div><el-progress :percentage="timePercent"></el-progress></div>
     </div>
     <div>
       <el-row type="flex">
         <el-col class="bottom-bar-col">
           <div>已筹</div>
-          {{funding.balance}} wei
+          {{fundingBalance}} wei
         </el-col>
         <el-col class="bottom-bar-col">
           <div>已达</div>
-
+          {{balancePercent}}%
         </el-col>
         <el-col class="bottom-bar-col">
           <div>参与人数</div>
@@ -32,6 +32,28 @@ export default {
     funding: {
       type: Object,
     }
+  },
+  computed: {
+    fundingBalance() {
+      if (this.funding.balance <= 9999)
+        return this.funding.balance
+      else
+        return '...'
+    },
+    remainTime() {
+      return Math.ceil((this.funding.endTime - (new Date).valueOf()) / (1000*3600*24))
+    },
+    timePercent() {
+      if (this.funding.endTime > (new Date).valueOf())
+        return Math.ceil(( 1 - (this.funding.endTime - (new Date).valueOf())
+            / (this.funding.endTime - this.funding.startTime)) * 100)
+      else
+        return 100
+    },
+    balancePercent() {
+      return Math.ceil((this.funding.balance)
+          / (this.funding.targetBalance) * 100)
+    },
   },
   methods: {
     selectFunding() {

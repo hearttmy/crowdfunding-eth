@@ -28,11 +28,12 @@ let getFundingDetails = async (index) => {
                 let projectName = await newInstance.methods.projectName().call()
                 let projectDetail = await newInstance.methods.projectDetail().call()
                 let targetBalance = await newInstance.methods.targetBalance().call()
+                let startTime = await newInstance.methods.startTime().call()
                 let endTime = await newInstance.methods.endTime().call()
                 let balance = await newInstance.methods.getBalance().call()
                 let investorsCount = await newInstance.methods.getInvestorsCount().call()
 
-                let detail = { fundingAddress, manager, projectName, projectDetail,targetBalance, endTime, balance, investorsCount }
+                let detail = { fundingAddress, manager, projectName, projectDetail,targetBalance, startTime, endTime, balance, investorsCount }
                 resolve(detail)
             } catch (error) {
                 reject(error)
@@ -45,11 +46,12 @@ let getFundingDetails = async (index) => {
     return fundDetailPromise
 }
 
-let createFunding = (projectName, projectDetail, targetMoney, duration) => {
+let createFunding = (projectName, projectDetail, targetMoney, startTime, endTime) => {
     return new Promise(async (resolve,reject) => {
         try {
             let accounts = await web3.eth.getAccounts();
-            let res = await fundingFactoryInstance.methods.createFunding(projectName, projectDetail, targetMoney, duration).send({
+            let res = await fundingFactoryInstance.methods.createFunding(projectName,
+                projectDetail, targetMoney, startTime, endTime).send({
                 from:accounts[0],
             })
             resolve(res)

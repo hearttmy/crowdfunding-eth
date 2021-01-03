@@ -4,13 +4,13 @@
       <el-col :span="18">
         <el-tabs type="border-card" style="height: 800px">
           <el-tab-pane label="所有的">
-            <FundingList :funding-list="fundingList1"></FundingList>
+            <FundingList :funding-list="$store.state.fundingList1"></FundingList>
+          </el-tab-pane>
+          <el-tab-pane label="我创建的">
+            <FundingList :funding-list="$store.state.fundingList2"></FundingList>
           </el-tab-pane>
           <el-tab-pane label="我参与的">
-            <FundingList :funding-list="fundingList2"></FundingList>
-          </el-tab-pane>
-          <el-tab-pane label="我管理的">
-            <FundingList :funding-list="fundingList3"></FundingList>
+            <FundingList :funding-list="$store.state.fundingList3"></FundingList>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -26,34 +26,14 @@
 <script>
 import MainLayout from "@/components/MainLayout";
 import FundingList from "@/components/FundingList";
-import {getFundingDetails} from "@/eth/interface";
 import DetailCard from "@/components/DetailCard";
 
 export default {
   name: "Home",
   components: {DetailCard, FundingList, MainLayout},
-  data() {
-    return {
-      fundingList1: [],
-      fundingList2: [],
-      fundingList3: [],
-    }
-  },
+
   created() {
-    getFundingDetails(1)
-    .then(res => {
-      this.fundingList1 = res
-    })
-
-    getFundingDetails(2)
-    .then(res => {
-      this.fundingList2 = res
-    })
-
-    getFundingDetails(3)
-    .then(res => {
-      this.fundingList3 = res
-    })
+    this.$store.dispatch('updateFundingList')
   },
   methods: {
 

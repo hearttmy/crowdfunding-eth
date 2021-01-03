@@ -29,7 +29,12 @@ let factoryAbi = [
             },
             {
                 "internalType": "uint256",
-                "name": "_duration",
+                "name": "_startTime",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_endTime",
                 "type": "uint256"
             }
         ],
@@ -102,7 +107,7 @@ let factoryAbi = [
 ]
 
 //获取工厂合约地址
-let factoryAddress = '0xbd2906e142526d06c3E72210FAb8CaF17B871585'
+let factoryAddress = '0x83c7eF3cfB07c92bA8909985b028B49901cBcD57'
 //获取工厂合约实例
 let fundingFactoryInstance = new web3.eth.Contract(factoryAbi,factoryAddress)
 
@@ -127,7 +132,12 @@ let fundingAbi = [
             },
             {
                 "internalType": "uint256",
-                "name": "_durationInSeconds",
+                "name": "_startTime",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_endTime",
                 "type": "uint256"
             },
             {
@@ -461,6 +471,21 @@ let fundingAbi = [
                 "internalType": "enum Funding.RequestStatus",
                 "name": "status",
                 "type": "uint8"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "startTime",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "payable": false,
