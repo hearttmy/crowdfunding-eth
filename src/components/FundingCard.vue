@@ -3,7 +3,7 @@
     <img class="funding-cover" src="~@/assets/img/elliot.jpg">
     <div style="padding: 10px">
       <div style="font-size: 20px; font-weight: bold;">{{funding.projectName}}</div>
-      <div style="font-size: 15px; color: #999;">{{remainTime}} 天</div>
+      <div style="font-size: 15px; color: #999;">{{remainTime}}</div>
       <div><el-progress :percentage="timePercent"></el-progress></div>
     </div>
     <div>
@@ -41,7 +41,10 @@ export default {
         return '...'
     },
     remainTime() {
-      return Math.ceil((this.funding.endTime - (new Date).valueOf()) / (1000*3600*24))
+      if (this.funding.endTime < (new Date).valueOf()) {
+        return '已结束'
+      }
+      return Math.ceil((this.funding.endTime - (new Date).valueOf()) / (1000*3600*24)) + ' 天'
     },
     timePercent() {
       if (this.funding.endTime > (new Date).valueOf())

@@ -32,8 +32,11 @@ let getFundingDetails = async (index) => {
                 let endTime = await newInstance.methods.endTime().call()
                 let balance = await newInstance.methods.getBalance().call()
                 let investorsCount = await newInstance.methods.getInvestorsCount().call()
+                let requestBalance = await newInstance.methods.requestBalance().call()
+                let isDiscarded = await newInstance.methods.isDiscarded().call()
 
-                let detail = { fundingAddress, manager, projectName, projectDetail,targetBalance, startTime, endTime, balance, investorsCount }
+                let detail = { fundingAddress, manager, projectName, projectDetail,targetBalance,
+                    startTime, endTime, balance, investorsCount, requestBalance, isDiscarded}
                 resolve(detail)
             } catch (error) {
                 reject(error)
@@ -66,11 +69,8 @@ let investFunding = (fundingAddress,supportBalance) => {
 
     return new Promise(async (resolve,reject) => {
         try {
-            //创建合约实例
             let fundingInstance = newFundingInstance()
-            //填充地址
             fundingInstance.options.address = fundingAddress
-            //获取投资人地址
             let accounts = await web3.eth.getAccounts()
 
             let res = await fundingInstance.methods.invest().send({
@@ -84,8 +84,131 @@ let investFunding = (fundingAddress,supportBalance) => {
     })
 }
 
+let createRequest = (fundingAddress,purpose,cost) => {
+    return new Promise (async (resolve,reject) => {
+        try {
+            let fundingContract = newFundingInstance()
+            fundingContract.options.address = fundingAddress
+            let accounts = await web3.eth.getAccounts()
+
+            let result = await fundingContract.methods.createRequest(purpose,cost).send({
+                from:accounts[0]
+
+            })
+            resolve(result)
+
+        } catch (error) {
+            reject(error)
+        }
+
+    })
+}
+
+
+let getRequests = (fundingAddress) => {
+    return new Promise( async (resolve,reject) => {
+        try {
+            let accounts = web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+            //获取请求数量
+            let requestsCount = await fundingInstance.methods.getRequestsCount().call({
+                from:accounts[0]
+            })
+            let requestsDeatils = []
+            for (let i = 0; i < requestsCount; i++) {
+
+                let requestsDeatil = await fundingInstance.methods.getRequestDetailByIndex(i).call({
+                    from:accounts[0]
+                })
+                requestsDeatils.push(requestsDeatil)
+            }
+            resolve(requestsDeatils)
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const isManager = (fundingAddress) => {
+    return new Promise(async (resolve,reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+
+            let flag = await fundingInstance.methods.isManager().call({
+                from: accounts[0]
+            })
+            resolve(flag)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const isInvestor = (fundingAddress) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+
+            let flag = await fundingInstance.methods.isInvestor().call({
+                from: accounts[0]
+            })
+            resolve(flag)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const getInvestment_web3 = (fundingAddress) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+
+            let result = await fundingInstance.methods.getInvestment().call({
+                from: accounts[0]
+            })
+            resolve(result)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const drawback_web3 = (fundingAddress) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+
+            let result = await fundingInstance.methods.drawback().call({
+                from: accounts[0]
+            })
+            resolve(result)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+
+
 export {
     getFundingDetails,
     createFunding,
     investFunding,
+    createRequest,
+    getRequests,
+    isManager,
+    isInvestor,
+    getInvestment_web3,
+    drawback_web3,
 }

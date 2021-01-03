@@ -1,6 +1,8 @@
 //导入web3实例
 import web3 from "@/utils/InitWeb3";
 
+//获取工厂合约地址
+let factoryAddress = '0x5926576c0B4E1237E3a5Bc0d82f42b60c8410045'
 //获取工厂合约abi
 let factoryAbi = [
     {
@@ -106,8 +108,6 @@ let factoryAbi = [
     }
 ]
 
-//获取工厂合约地址
-let factoryAddress = '0x83c7eF3cfB07c92bA8909985b028B49901cBcD57'
 //获取工厂合约实例
 let fundingFactoryInstance = new web3.eth.Contract(factoryAbi,factoryAddress)
 
@@ -247,6 +247,21 @@ let fundingAbi = [
     {
         "constant": true,
         "inputs": [],
+        "name": "getInvestment",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
         "name": "getInvestors",
         "outputs": [
             {
@@ -358,27 +373,6 @@ let fundingAbi = [
         "constant": true,
         "inputs": [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "investorBalance",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
@@ -390,6 +384,51 @@ let fundingAbi = [
                 "internalType": "address payable",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "isDiscarded",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "isInvestor",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "isManager",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "payable": false,
@@ -443,34 +482,13 @@ let fundingAbi = [
     },
     {
         "constant": true,
-        "inputs": [
+        "inputs": [],
+        "name": "requestBalance",
+        "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
-            }
-        ],
-        "name": "requests",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "purpose",
-                "type": "string"
-            },
-            {
-                "internalType": "uint256",
-                "name": "cost",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "voteCount",
-                "type": "uint256"
-            },
-            {
-                "internalType": "enum Funding.RequestStatus",
-                "name": "status",
-                "type": "uint8"
             }
         ],
         "payable": false,
