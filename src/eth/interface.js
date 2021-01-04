@@ -34,9 +34,11 @@ let getFundingDetails = async (index) => {
                 let investorsCount = await newInstance.methods.getInvestorsCount().call()
                 let requestBalance = await newInstance.methods.requestBalance().call()
                 let isDiscarded = await newInstance.methods.isDiscarded().call()
+                let isAchieved = await newInstance.methods.isAchieved().call()
 
                 let detail = { fundingAddress, manager, projectName, projectDetail,targetBalance,
-                    startTime, endTime, balance, investorsCount, requestBalance, isDiscarded}
+                    startTime, endTime, balance, investorsCount, requestBalance, isDiscarded,
+                    isAchieved}
                 resolve(detail)
             } catch (error) {
                 reject(error)
@@ -108,22 +110,23 @@ let createRequest = (fundingAddress,purpose,cost) => {
 let getRequests = (fundingAddress) => {
     return new Promise( async (resolve,reject) => {
         try {
-            let accounts = web3.eth.getAccounts()
+            let accounts = await web3.eth.getAccounts()
             let fundingInstance = newFundingInstance()
             fundingInstance.options.address = fundingAddress
             //获取请求数量
             let requestsCount = await fundingInstance.methods.getRequestsCount().call({
                 from:accounts[0]
             })
-            let requestsDeatils = []
+            let requestsDetails = []
             for (let i = 0; i < requestsCount; i++) {
 
-                let requestsDeatil = await fundingInstance.methods.getRequestDetailByIndex(i).call({
+                let requestsDetail = await fundingInstance.methods.getRequestDetailByIndex(i).call({
                     from:accounts[0]
                 })
-                requestsDeatils.push(requestsDeatil)
+                console.log(requestsDetail)
+                requestsDetails.push(requestsDetail)
             }
-            resolve(requestsDeatils)
+            resolve(requestsDetails)
 
         } catch (error) {
             reject(error)
@@ -183,23 +186,56 @@ const getInvestment_web3 = (fundingAddress) => {
 }
 
 const drawback_web3 = (fundingAddress) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve,reject) => {
         try {
-            let accounts = await web3.eth.getAccounts()
             let fundingInstance = newFundingInstance()
             fundingInstance.options.address = fundingAddress
+            let accounts = await web3.eth.getAccounts()
 
-            let result = await fundingInstance.methods.drawback().call({
-                from: accounts[0]
+            let res = await fundingInstance.methods.drawback().send({
+                from:accounts[0],
             })
-            resolve(result)
+            resolve(res)
         } catch (error) {
             reject(error)
         }
     })
 }
 
+const voteRequest_web3 = (fundingAddress, index, isApproved) => {
+    return new Promise(async (resolve,reject) => {
+        try {
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+            let accounts = await web3.eth.getAccounts()
 
+            let res = await fundingInstance.methods.voteRequest(index, isApproved).send({
+                from:accounts[0],
+            })
+            resolve(res)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const executeRequest_web3 = (fundingAddress,index) => {
+    return new Promise(async (resolve,reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = newFundingInstance()
+            fundingInstance.options.address = fundingAddress
+
+            let res = await fundingInstance.methods.executeRequest(index).send({
+                from:accounts[0]
+            })
+
+            resolve(res)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 export {
     getFundingDetails,
@@ -211,4 +247,6 @@ export {
     isInvestor,
     getInvestment_web3,
     drawback_web3,
+    voteRequest_web3,
+    executeRequest_web3,
 }

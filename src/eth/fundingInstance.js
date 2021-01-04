@@ -2,7 +2,7 @@
 import web3 from "@/utils/InitWeb3";
 
 //获取工厂合约地址
-let factoryAddress = '0x5926576c0B4E1237E3a5Bc0d82f42b60c8410045'
+let factoryAddress = '0x595F09c22f9527Ba499D014118CC6A68583Bed42'
 //获取工厂合约abi
 let factoryAbi = [
     {
@@ -159,21 +159,6 @@ let fundingAbi = [
         "constant": false,
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            }
-        ],
-        "name": "approveRequest",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
                 "internalType": "string",
                 "name": "_purpose",
                 "type": "string"
@@ -193,7 +178,7 @@ let fundingAbi = [
     {
         "constant": false,
         "inputs": [],
-        "name": "drawBack",
+        "name": "drawback",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -339,6 +324,16 @@ let fundingAbi = [
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "payable": false,
@@ -384,6 +379,21 @@ let fundingAbi = [
                 "internalType": "address payable",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "isAchieved",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "payable": false,
@@ -523,6 +533,26 @@ let fundingAbi = [
         ],
         "payable": false,
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isApproved",
+                "type": "bool"
+            }
+        ],
+        "name": "voteRequest",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]

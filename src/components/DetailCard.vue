@@ -12,8 +12,9 @@
       </div>
     </div>
     <div class="part-wrapper">
-      <div class="title-wrapper">众筹进度</div>
-      <div>已筹：{{$store.state.funding.balance}} wei</div>
+      <div class="title-wrapper">众筹进度：{{isAchieved ? '已完成' : '未完成'}}</div>
+      <div v-if="!isAchieved">已筹：{{$store.state.funding.balance}} wei</div>
+      <div v-else>账户剩余：{{$store.state.funding.balance}} wei</div>
       <div>目标：{{$store.state.funding.targetBalance}} wei</div>
       <div>参与人数：{{$store.state.funding.investorsCount}}</div>
     </div>
@@ -28,7 +29,7 @@
                      @click="showInvestDialog"
                      v-if="!investDisabled">参与众筹</el-button>
           <el-button style="width: 100%" type="primary"
-                     @click="investDialogVisible = true"
+                     @click="showInvestDialog"
                      v-else>显示投资信息</el-button>
         </el-col>
         <el-col :span="12">
@@ -86,7 +87,8 @@
     </el-dialog>
 
 
-    <el-dialog title="资金请求" :visible.sync="requestDialogVisible" :close-on-click-modal="false">
+    <el-dialog title="资金请求" :visible.sync="requestDialogVisible" :close-on-click-modal="false"
+               width="70%">
       <div style="font-weight: bold; margin-bottom: 15px">已有资金请求列表</div>
       <el-table :data="requestTableData" stripe style="width: 100%">
         <el-table-column prop="0" label="使用目的">
@@ -104,7 +106,26 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="4" label="状态">
+        <el-table-column label="允许率">
+          <template slot-scope="scope">
+            {{approveRate(scope.$index)}}%
+          </template>
+        </el-table-column>
+
+        <el-table-column label="投票率">
+          <template slot-scope="scope">
+            {{voteRate(scope.$index)}}%
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="6" label="状态">
+        </el-table-column>
+
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" :disabled="requestTableData[scope.$index]['6'] !== '请求已通过'"
+                       @click="executeRequest(scope.$index)">执行</el-button>
+          </template>
         </el-table-column>
       </el-table>
 
@@ -130,7 +151,8 @@
     </el-dialog>
 
 
-    <el-dialog title="投票" :visible.sync="voteDialogVisible" :close-on-click-modal="false">
+    <el-dialog title="投票" :visible.sync="voteDialogVisible" :close-on-click-modal="false"
+               width="70%">
       <div style="font-weight: bold; margin-bottom: 15px">已有资金请求列表</div>
       <el-table :data="requestTableData" stripe style="width: 100%">
         <el-table-column prop="0" label="使用目的">
@@ -148,12 +170,34 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="4" label="状态">
+        <el-table-column label="允许率">
+          <template slot-scope="scope">
+            {{approveRate(scope.$index)}}%
+          </template>
+        </el-table-column>
+
+        <el-table-column label="投票率">
+          <template slot-scope="scope">
+            {{voteRate(scope.$index)}}%
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="6" label="状态">
+        </el-table-column>
+
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button v-if="!requestTableData[scope.$index]['2']"
+                       type="text" @click="voteRequest(scope.$index, true)">赞同</el-button>
+            <el-button v-if="!requestTableData[scope.$index]['2']"
+                       type="text" @click="voteRequest(scope.$index, false)">反对</el-button>
+            <el-button v-else type="text" :disabled="true">已投票</el-button>
+          </template>
         </el-table-column>
       </el-table>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="requestDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="voteDialogVisible = false">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -161,7 +205,15 @@
 </template>
 
 <script>
-import {createRequest, getInvestment_web3, getRequests, investFunding, isInvestor, isManager} from '@/eth/interface'
+import {
+  createRequest,
+  drawback_web3, executeRequest_web3,
+  getInvestment_web3,
+  getRequests,
+  investFunding,
+  isInvestor,
+  isManager, voteRequest_web3
+} from '@/eth/interface'
 
 export default {
   name: "DetailCard",
@@ -228,7 +280,7 @@ export default {
           { validator: validateRequest, trigger: 'blur' }
         ],
       },
-      requestStatus: ['投票中', '请求已通过', '请求未通过'],
+      requestStatus: ['投票中', '请求已通过', '请求未通过', '请求已完成'],
 
       //vote part
       voteDialogVisible: false,
@@ -249,7 +301,7 @@ export default {
         return 100
     },
     isAchieved() {
-      return  this.$store.state.funding.balance == this.$store.state.funding.targetBalance
+      return  this.$store.state.funding.isAchieved
     },
     investDisabled() {
       return this.$store.state.funding.endTime < (new Date).valueOf()
@@ -263,7 +315,7 @@ export default {
     },
     drawbackDisabled() {
       return this.isAchieved || !this.isFundingManager
-    }
+    },
   },
   created() {
     isManager(this.$store.state.funding.fundingAddress)
@@ -310,11 +362,22 @@ export default {
       .then(res => {
         this.requestTableData = res
         this.requestTableData.map(value => {
-          value['4'] = this.requestStatus[value['4']]
-          value['2'] = value['2'] ? '已投票' : '未投票'
+          value['6'] = this.requestStatus[value['6']]
           return value
         })
       })
+    },
+    approveRate(index) {
+      return Math.ceil(
+          this.requestTableData[index]['4'] / this.$store.state.funding.targetBalance * 100
+      )
+    },
+    voteRate(index) {
+      return Math.ceil(
+          (this.requestTableData[index]['4'] / this.$store.state.funding.targetBalance
+          + this.requestTableData[index]['5'] / this.$store.state.funding.targetBalance)
+          * 100
+      )
     },
 
     showRequestDialog() {
@@ -342,7 +405,29 @@ export default {
       this.getRequestData()
       this.voteDialogVisible = true
     },
+    voteRequest(index, isApproved) {
+      voteRequest_web3(this.$store.state.funding.fundingAddress, index, isApproved)
+      .then(res => {
+        this.$message({
+          showClose: true,
+          message: '投票成功',
+          type: 'success',
+        })
+        this.getRequestData()
+      })
+    },
 
+    executeRequest(index) {
+      executeRequest_web3(this.$store.state.funding.fundingAddress, index)
+      .then(res => {
+        this.$message({
+          showClose: true,
+          message: '请求执行成功',
+          type: 'success',
+        })
+        this.getRequestData()
+      })
+    },
 
     drawback() {
       this.$confirm('此操作将退回众筹金额并删除此众筹, 是否继续?', '提示', {
@@ -350,7 +435,16 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-
+        drawback_web3(this.$store.state.funding.fundingAddress)
+        .then(res => {
+          this.$message({
+            showClose: true,
+            message: '众筹撤销成功',
+            type: 'success',
+          })
+          this.$store.dispatch('updateFundingList')
+        })
+        .catch(err => err)
       }).catch(() => {
       });
 
@@ -377,5 +471,6 @@ export default {
 .bottom-wrapper {
   padding: 10px;
 }
+
 
 </style>

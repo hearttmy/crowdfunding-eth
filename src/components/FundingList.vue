@@ -106,7 +106,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.createForm)
           createFunding(this.createForm.projectName, this.createForm.projectDetail, this.createForm.targetBalance,
               (new Date()).valueOf(),this.createForm.date)
           .then(res => {
@@ -115,6 +114,7 @@ export default {
               message: '发起众筹成功',
               type: 'success',
             })
+            this.$refs[formName].resetFields();
             this.$store.dispatch('updateFundingList')
           })
           .catch(err => {
