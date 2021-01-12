@@ -10,23 +10,23 @@
 
 1. 复制contracts文件夹下的Funding.sol到remix中
 
-   ![](C:\Users\11566\Desktop\Files\Funding-eth\1.png)
+   ![](img/1.png)
 
 2. solidity编译器版本选择v0.5.16, 编译Funding.sol
 
-   ![](C:\Users\11566\Desktop\Files\Funding-eth\2.png)
+   ![](img/2.png)
 
 3. MetaMask连接到本地私链
 
 4. 在remix中将FundingFactory合约部署到私链
 
-   ![](C:\Users\11566\Desktop\Files\Funding-eth\4.png)
+   ![](img/4.png)
 
 5. 查看新部署合约的地址（可以直接在私链中新创建的区块中查看）
 
 6. 修改`src/eth/fundingInstance.js` 中的合约地址
 
-   ![](C:\Users\11566\Desktop\Files\Funding-eth\5.png)
+   ![](img/5.png)
 
 ### Vue前端部署
 
