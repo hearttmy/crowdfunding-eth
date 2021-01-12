@@ -11,7 +11,8 @@
 1. 复制contracts文件夹下的Funding.sol到remix中
 2. solidity编译器版本选择v,编译Funding.sol
 3. MetaMask连接到本地私链
-4. 
+4. 在remix中将FundingFactory合约部署到私链
+5. 
 
 ### Vue前端部署
 
@@ -28,4 +29,4 @@
 
 部分合约代码参考自：https://github.com/liucuncong/Funding-eth
 
-前端代码又我独立完成
+前端代码由我独立完成
