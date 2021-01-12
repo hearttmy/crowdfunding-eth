@@ -1,19 +1,31 @@
-# funding-eth
+# 去中心化众筹Dapp
 
-## Project setup
-```
-npm install
-```
+[TOC]
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 项目部署方法
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### 智能合约部署
+
+1. 复制contracts文件夹下的Funding.sol到remix中
+2. solidity编译器版本选择v,编译Funding.sol
+3. MetaMask连接到本地私链
+4. 
+
+### Vue前端部署
+
+在根目录下（与package.json同目录下）执行以下操作
+
+1. 运行`npm install`
+2. 运行`npm run serve`
+
+
+
+## 备注
+
+作者：唐敏跃 3180104412
+
+部分合约代码参考自：https://github.com/liucuncong/Funding-eth
+
+前端代码又我独立完成
