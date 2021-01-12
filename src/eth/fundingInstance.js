@@ -2,7 +2,7 @@
 import web3 from "@/utils/InitWeb3";
 
 //获取工厂合约地址
-let factoryAddress = '0x595F09c22f9527Ba499D014118CC6A68583Bed42'
+let factoryAddress = '0xA3623C7A9Fd467f497bae4597894b1E6ea0E51fD'
 //获取工厂合约abi
 let factoryAbi = [
     {
