@@ -13,7 +13,7 @@
     </div>
 
     <el-row>
-      <el-col :span="span" v-for="(funding, i) in fundingList" style="padding: 10px" :key="i">
+      <el-col :span="span" v-for="(funding, i) in fundingListInPage" style="padding: 10px" :key="i">
         <FundingCard :funding="funding"></FundingCard>
       </el-col>
     </el-row>
@@ -100,7 +100,15 @@ export default {
   computed: {
     totalPage() {
       return Math.ceil(this.fundingList.length / this.pageSize)
-    }
+    },
+    fundingListInPage() {
+      if (this.currentPage * this.pageSize <= this.fundingList.length) {
+        return this.fundingList.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
+      }
+      else {
+        return this.fundingList.slice((this.currentPage - 1) * this.pageSize, this.fundingList.length)
+      }
+    },
   },
   methods: {
     submitForm(formName) {

@@ -107,7 +107,7 @@ contract Funding {
         if (req.voteApproveCount * 2 > address(this).balance) {
             req.status = RequestStatus.Approved;
         }
-        else if (req.voteDisapproveCount * 2 > address(this).balance) {
+        else if (req.voteDisapproveCount * 2 > targetBalance) {
             req.status = RequestStatus.NotApproved;
         }
     }
